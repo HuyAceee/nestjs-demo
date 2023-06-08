@@ -10,7 +10,12 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { PostService } from '../services/post.service';
-import { CreatePostDto, UpdatePostDto } from '../dto/post.dto';
+import {
+  CreatePostDto,
+  GetPostsByCategoriesBodyDto,
+  GetPostsByCategoryBodyDto,
+  UpdatePostDto,
+} from '../dto/post.dto';
 import { AuthGuard } from '@nestjs/passport';
 
 @Controller('post')
@@ -41,5 +46,15 @@ export class PostController {
   @Delete(':id')
   deletePost(@Param('id') id: string) {
     return this.postService.deletePost(id);
+  }
+
+  @Post('category')
+  getPostsByCategory(@Body() body: GetPostsByCategoryBodyDto) {
+    return this.postService.getPostsByCategory(body.categoryId);
+  }
+
+  @Post('categories')
+  getPostsByCategories(@Body() body: GetPostsByCategoriesBodyDto) {
+    return this.postService.getPostsByCategories(body.categories);
   }
 }

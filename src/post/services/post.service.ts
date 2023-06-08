@@ -53,4 +53,20 @@ export class PostService {
   async deletePost(id: string) {
     return this.postRepository.deleteOne(id);
   }
+
+  async getPostsByCategory(categoryId: string) {
+    return this.postRepository.getByCondition({
+      categories: {
+        $elemMatch: { $eq: categoryId },
+      },
+    });
+  }
+
+  async getPostsByCategories(categories: [string]) {
+    return await this.postRepository.getByCondition({
+      categories: {
+        $all: categories,
+      },
+    });
+  }
 }

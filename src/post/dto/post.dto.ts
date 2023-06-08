@@ -28,3 +28,12 @@ export class PaginationPostDto {
   @IsNotEmpty()
   start: string;
 }
+
+export class GetPostsByCategoryBodyDto {
+  @IsNotEmpty()
+  categoryId: string;
+}
+
+export class GetPostsByCategoriesBodyDto {
+  categories: [string];
+}
