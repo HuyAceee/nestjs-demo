@@ -8,6 +8,7 @@ const PostSchema = new Schema(
     title: String,
     description: String,
     content: String,
+    view_number: Number,
     user: {
       type: Schema.Types.ObjectId,
       ref: 'User',
@@ -31,6 +32,7 @@ export interface Post extends Document {
   title: string;
   description: string;
   content: string;
+  view_number: number;
   user: User;
   categories: [Category];
 }

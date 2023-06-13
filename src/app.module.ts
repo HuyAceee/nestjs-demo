@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -7,6 +8,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { UserModule } from './user/user.module';
 import { APP_FILTER } from '@nestjs/core';
 import { ExceptionLoggerFilter } from './user/utils/ExceptionLogger.filter';
+import { SubscriberModule } from './subscriber/subscriber.module';
 
 @Module({
   imports: [
@@ -19,6 +21,7 @@ import { ExceptionLoggerFilter } from './user/utils/ExceptionLogger.filter';
       useFindAndModify: false,
       useCreateIndex: true,
     }),
+    SubscriberModule,
   ],
   controllers: [AppController],
   providers: [

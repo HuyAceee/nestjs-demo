@@ -1,6 +1,10 @@
 /* eslint-disable prettier/prettier */
 import { Body, Controller, Post } from '@nestjs/common';
-import { CreateUserDto, LoginUserDto } from '../dto/user.dto';
+import {
+  CreateUserDto,
+  LoginUserDto,
+  RefreshTokenBodyDto,
+} from '../dto/user.dto';
 import { AuthService } from '../services/auth.service';
 
 @Controller('auth')
@@ -14,5 +18,11 @@ export class AuthController {
   @Post('login')
   login(@Body() loginDto: LoginUserDto) {
     return this.authService.login(loginDto);
+  }
+
+  @Post('refresh')
+  refresh(@Body() body: RefreshTokenBodyDto) {
+    console.log(body);
+    return this.authService.refresh(body.refreshToken);
   }
 }

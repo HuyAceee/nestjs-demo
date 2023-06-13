@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CategoryRepository } from '../repositories/category.repository';
 import { CreateCategoryDto } from '../dto/category.dto';
@@ -12,10 +13,12 @@ export class CategoryService {
 
   async getCategoryById(id: string) {
     const category = await this.categoryRepository.findById(id);
+    console.log(category);
     if (category) {
       await category
         .populate({
           path: 'posts',
+          select: 'title',
         })
         .execPopulate();
       return category;

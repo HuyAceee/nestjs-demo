@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { UserRepository } from '../repositories/user.repository';
 import { CreateUserDto, LoginUserDto } from '../dto/user.dto';
@@ -6,6 +7,10 @@ import * as bcrypt from 'bcrypt';
 @Injectable()
 export class UserService {
   constructor(private readonly userRepository: UserRepository) {}
+
+  async getAllUser() {
+    return this.userRepository.findAll();
+  }
 
   async createUser(user: CreateUserDto) {
     user.password = await bcrypt.hash(user.password, 10);
@@ -37,5 +42,36 @@ export class UserService {
     return await this.userRepository.findByCondition({
       email,
     });
+  }
+
+  async update(filter, update) {
+    if (update.refreshToken) {
+      update.refreshToken = await bcrypt.hash(
+        this.reverse(update.refreshToken),
+        10,
+      );
+    }
+    return await this.userRepository.findByConditionAndUpdate(filter, {
+      refreshToken: update.refreshToken,
+    });
+  }
+
+  async findUserByRefresh(refreshToken, email) {
+    const user = await this.userRepository.findByCondition({ email });
+    if (!user) {
+      throw new HttpException('Invalid token', HttpStatus.UNAUTHORIZED);
+    }
+    const is_equal = await bcrypt.compare(
+      this.reverse(refreshToken),
+      user.refreshToken,
+    );
+    if (!is_equal) {
+      throw new HttpException('Invalid credentials', HttpStatus.UNAUTHORIZED);
+    }
+    return user;
+  }
+
+  private reverse(s: string) {
+    return s.split('').reverse().join('');
   }
 }

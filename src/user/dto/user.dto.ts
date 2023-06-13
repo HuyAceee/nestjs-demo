@@ -13,5 +13,9 @@ export class LoginUserDto {
 }
 
 export class CreateTokenDto {
-    @IsNotEmpty() email: string;
-  }
+  @IsNotEmpty() email: string;
+}
+
+export class RefreshTokenBodyDto {
+  @IsNotEmpty() refreshToken: string;
+}
