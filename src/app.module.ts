@@ -3,12 +3,14 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { PostModule } from './post/post.module';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UserModule } from './user/user.module';
 import { APP_FILTER } from '@nestjs/core';
 import { ExceptionLoggerFilter } from './user/utils/ExceptionLogger.filter';
 import { SubscriberModule } from './subscriber/subscriber.module';
+import { MailerModule, HandlebarsAdapter } from '@nest-modules/mailer';
+import { join } from 'path';
 
 @Module({
   imports: [
@@ -22,6 +24,30 @@ import { SubscriberModule } from './subscriber/subscriber.module';
       useCreateIndex: true,
     }),
     SubscriberModule,
+    MailerModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        transport: {
+          host: configService.get('MAIL_HOST'),
+          secure: false,
+          auth: {
+            user: configService.get('MAIL_USER'),
+            pass: configService.get('MAIL_PASSWORD'),
+          },
+        },
+        defaults: {
+          from: `"No Reply" <${configService.get('MAIL_FROM')}>`,
+        },
+        template: {
+          dir: join(__dirname, 'src/templates/email'),
+          adapter: new HandlebarsAdapter(),
+          options: {
+            strict: true,
+          },
+        },
+      }),
+    }),
   ],
   controllers: [AppController],
   providers: [
